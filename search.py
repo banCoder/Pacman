@@ -77,10 +77,10 @@ def depthFirstSearch(problem):
     """Expands deepets node first.
 
     Frontier is a Stack."""
-    open_list, closed_set = util.Stack(), set()
-    open_list.push(([problem.getStartState()], []))
-    while open_list:
-        path, actions = open_list.pop()
+    stack, closed_set = util.Stack(), set()
+    stack.push(([problem.getStartState()], []))
+    while not stack.isEmpty():
+        path, actions = stack.pop()
         node = path[-1]
         if problem.isGoalState(node) == True:
             return actions
@@ -89,7 +89,7 @@ def depthFirstSearch(problem):
             for neighbour in problem.getSuccessors(node)[::-1]:
                 n_node, n_action, n_cost = neighbour
                 if n_node not in path:
-                    open_list.push((path + [n_node], actions + [n_action]))
+                    stack.push((path + [n_node], actions + [n_action]))
     return []
 
 def breadthFirstSearch(problem):
@@ -99,7 +99,7 @@ def breadthFirstSearch(problem):
     Better to use deque!"""
     queue, closed_set = util.Queue(), set()
     queue.push(([problem.getStartState()], []))
-    while queue:
+    while not queue.isEmpty():
         path, actions = queue.pop()
         node = path[-1]   
         if problem.isGoalState(node) == True:
@@ -107,15 +107,32 @@ def breadthFirstSearch(problem):
         if node not in closed_set:
             closed_set.add(node)
             for neighbour in problem.getSuccessors(node):
-                n_node, n_action, n_cost = neighbour                              
+                n_node, n_action, n_cost = neighbour
                 if n_node not in path:
                     queue.push((path + [n_node], actions + [n_action]))
     return []
 
 def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    """Expands most cost effective first.
+    
+    Frontier is a Priority queue with accumulative cost.
+    Counter is used to break ties."""
+    p_queue, closed_set = util.PriorityQueue(), set()
+    p_queue.push(([problem.getStartState()], [], 0), [0, 0])
+    counter = 0
+    while not p_queue.isEmpty():
+        path, actions, cost = p_queue.pop()
+        node = path[-1]   
+        if problem.isGoalState(node) == True:
+            return actions
+        if node not in closed_set:
+            closed_set.add(node)
+            for neighbour in problem.getSuccessors(node):
+                n_node, n_action, n_cost = neighbour
+                if n_node not in path:
+                    counter += 1
+                    p_queue.push((path + [n_node], actions + [n_action], n_cost + cost), [n_cost + cost, counter])
+    return []
 
 def nullHeuristic(state, problem=None):
     """
@@ -126,8 +143,23 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    p_queue, closed_set = util.PriorityQueue(), set()
+    start = problem.getStartState()
+    p_queue.push(([start], [], 0), [heuristic(start, problem), 0])
+    counter = 0
+    while not p_queue.isEmpty():
+        path, actions, cost = p_queue.pop()
+        node = path[-1]   
+        if problem.isGoalState(node) == True:
+            return actions
+        if node not in closed_set:
+            closed_set.add(node)
+            for neighbour in problem.getSuccessors(node):
+                n_node, n_action, n_cost = neighbour
+                if n_node not in path:
+                    counter += 1
+                    p_queue.push((path + [n_node], actions + [n_action], n_cost + cost), [heuristic(n_node, problem) + n_cost + cost, counter])
+    return []
 
 
 # Abbreviations
