@@ -5,15 +5,14 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{a37b10e1-9992-4765-9391-0e8b78e6fb58}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>autograder.py</StartupFile>
+    <StartupFile>pacman.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId>Global|ContinuumAnalytics|Anaconda27-64</InterpreterId>
-    <CommandLineArguments>
-    </CommandLineArguments>
+    <CommandLineArguments>-l mediumCorners -p SearchAgent -a fn=bfs,prob=CornersProblem</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />

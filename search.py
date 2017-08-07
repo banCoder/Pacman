@@ -84,12 +84,12 @@ def depthFirstSearch(problem):
         node = path[-1]
         if problem.isGoalState(node) == True:
             return actions
-        if node not in closed_set:
-            closed_set.add(node)            
+        if str(node) not in closed_set:
             for neighbour in problem.getSuccessors(node)[::-1]:
                 n_node, n_action, n_cost = neighbour
                 if n_node not in path:
                     stack.push((path + [n_node], actions + [n_action]))
+            closed_set.add(str(node))
     return []
 
 def breadthFirstSearch(problem):
@@ -104,8 +104,8 @@ def breadthFirstSearch(problem):
         node = path[-1]   
         if problem.isGoalState(node) == True:
             return actions
-        if node not in closed_set:
-            closed_set.add(node)
+        if str(node) not in closed_set:
+            closed_set.add(str(node))
             for neighbour in problem.getSuccessors(node):
                 n_node, n_action, n_cost = neighbour
                 if n_node not in path:
@@ -125,8 +125,8 @@ def uniformCostSearch(problem):
         node = path[-1]   
         if problem.isGoalState(node) == True:
             return actions
-        if node not in closed_set:
-            closed_set.add(node)
+        if str(node) not in closed_set:
+            closed_set.add(str(node))
             for neighbour in problem.getSuccessors(node):
                 n_node, n_action, n_cost = neighbour
                 if n_node not in path:
@@ -152,8 +152,8 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         node = path[-1]   
         if problem.isGoalState(node) == True:
             return actions
-        if node not in closed_set:
-            closed_set.add(node)
+        if str(node) not in closed_set:
+            closed_set.add(str(node))
             for neighbour in problem.getSuccessors(node):
                 n_node, n_action, n_cost = neighbour
                 if n_node not in path:
