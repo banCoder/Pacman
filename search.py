@@ -72,58 +72,47 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+
 def depthFirstSearch(problem):
-    """
-    Search the deepest nodes in the search tree first.
+    """Expands deepets node first.
 
-    Your search algorithm needs to return a list of actions that reaches the
-    goal. Make sure to implement a graph search algorithm.
-
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
-
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    """
-    "*** YOUR CODE HERE ***"    
-    start = problem.getStartState()
-    print start
-    open_list, closed_set = [[start]], set()
+    Frontier is a Stack."""
+    open_list, closed_set = util.Stack(), set()
+    open_list.push(([problem.getStartState()], []))
     while open_list:
-        path = open_list.pop()
+        path, actions = open_list.pop()
         node = path[-1]
         if node not in closed_set:
             closed_set.add(node)
             for neighbour in problem.getSuccessors(node):
-                if neighbour[0] not in path:
-                    if problem.isGoalState(neighbour[0]) == True:
-                        return reconstructPath(path + [neighbour[0]])
+                n_node, n_action, n_cost = neighbour
+                if n_node not in path:
+                    if problem.isGoalState(n_node) == True:
+                        return actions + [n_action]
                     else:
-                        open_list.append(path + [neighbour[0]])
+                        open_list.push((path + [n_node], actions + [n_action]))
     return []
 
-def reconstructPath(nodes):
-    from game import Directions
-    path = []
-    for i in range(len(nodes) - 1):
-        if nodes[i][0] == nodes[i + 1][0]:
-            if nodes[i][1] > nodes[i + 1][1]:
-                path.append(Directions.SOUTH)
-            else:
-                path.append(Directions.NORTH)
-        else:
-            if nodes[i][0] > nodes[i + 1][0]:
-                path.append(Directions.WEST)
-            else:
-                path.append(Directions.EAST)
-    return path
-
-
 def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    """Expands shallowest first.
+    
+    Frontier is a Queue.
+    Better to use deque!"""
+    queue, closed_set = util.Queue(), set()
+    queue.push(([problem.getStartState()], []))
+    while queue:
+        path, actions = queue.pop()
+        node = path[-1]
+        if node not in closed_set:
+            closed_set.add(node)
+            for neighbour in problem.getSuccessors(node):
+                n_node, n_action, n_cost = neighbour
+                if n_node not in path:
+                    if problem.isGoalState(n_node) == True:
+                        return actions + [n_action]
+                    else:
+                        queue.push((path + [n_node], actions + [n_action]))
+    return []
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
