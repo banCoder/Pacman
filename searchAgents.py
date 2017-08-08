@@ -333,23 +333,41 @@ class CornersProblem(search.SearchProblem):
 
 
 def cornersHeuristic(state, problem):
-    """
-    A heuristic for the CornersProblem that you defined.
+    import sys
+    import math
+    """A heuristic for the CornersProblem.
 
       state:   The current search state
                (a data structure you chose in your search problem)
 
       problem: The CornersProblem instance for this layout.
 
-    This function should always return a number that is a lower bound on the
-    shortest path from the state to a goal of the problem; i.e.  it should be
-    admissible (as well as consistent).
-    """
+    Calculates sum of manhattan distances from current position to closest corner.
+    Chooses closest corner from unvisited ones.
+    Closest corner is next start position."""
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    my_pos = state[0]
+    visited_corners = set(state[1])
 
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    def closest_corner(start, corners, visited_corners):
+        min_dist = sys.maxsize      
+        c_corner = None
+        for cor in corners:
+            if cor not in visited_corners:
+                dist = abs(start[0] - cor[0]) + abs(start[1] - cor[1])
+                if dist < min_dist:
+                    min_dist = dist
+                    c_corner = cor
+        return (c_corner, min_dist)
+
+    sum = 0
+    while len(visited_corners) < len(corners):
+        c_corner = closest_corner(my_pos, corners, visited_corners)
+        sum += c_corner[1]
+        visited_corners.add(c_corner[0])
+        my_pos = c_corner[0]
+    return sum
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"

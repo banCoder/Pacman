@@ -12,7 +12,7 @@
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <InterpreterId>Global|ContinuumAnalytics|Anaconda27-64</InterpreterId>
-    <CommandLineArguments>-l mediumCorners -p SearchAgent -a fn=bfs,prob=CornersProblem</CommandLineArguments>
+    <CommandLineArguments>-l mediumCorners -p AStarCornersAgent -z 0.5</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
