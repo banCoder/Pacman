@@ -117,7 +117,7 @@ def uniformCostSearch(problem):
     
     Frontier is a Priority queue with accumulative cost.
     Counter is used to break ties."""
-    p_queue, closed_set = util.PriorityQueue(), set()
+    p_queue, closed_set = util.PriorityQueue(), []
     p_queue.push(([problem.getStartState()], [], 0), [0, 0])
     counter = 0
     while not p_queue.isEmpty():
@@ -125,8 +125,8 @@ def uniformCostSearch(problem):
         node = path[-1]   
         if problem.isGoalState(node) == True:
             return actions
-        if str(node) not in closed_set:
-            closed_set.add(str(node))
+        if node not in closed_set:
+            closed_set.append(node)
             for neighbour in problem.getSuccessors(node):
                 n_node, n_action, n_cost = neighbour
                 if n_node not in path:
@@ -143,7 +143,7 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    p_queue, closed_set = util.PriorityQueue(), set()
+    p_queue, closed_set = util.PriorityQueue(), []
     start = problem.getStartState()
     p_queue.push(([start], [], 0), [heuristic(start, problem), 0])
     counter = 0
@@ -152,8 +152,8 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         node = path[-1]   
         if problem.isGoalState(node) == True:
             return actions
-        if str(node) not in closed_set:
-            closed_set.add(str(node))
+        if node not in closed_set:
+            closed_set.append(node)
             for neighbour in problem.getSuccessors(node):
                 n_node, n_action, n_cost = neighbour
                 if n_node not in path:
