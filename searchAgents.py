@@ -490,18 +490,31 @@ class ClosestDotSearchAgent(SearchAgent):
         print 'Path found with cost %d.' % len(self.actions)
 
     def findPathToClosestDot(self, gameState):
-        """
-        Returns a path (a list of actions) to the closest dot, starting from
+        """Returns a path (a list of actions) to the closest dot, starting from
         gameState.
-        """
-        # Here are some useful elements of the startState
-        startPosition = gameState.getPacmanPosition()
-        food = gameState.getFood()
-        walls = gameState.getWalls()
+
+        Implements Greedy best first search, same as A* without heuristic."""
         problem = AnyFoodSearchProblem(gameState)
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        def greedyBestFirstSearch(problem):
+            """Search the node that has the lowest cost."""
+            p_queue, closed_set = util.PriorityQueue(), []
+            p_queue.push(([problem.getStartState()], [], 0), [0, 0])
+            counter = 0
+            while not p_queue.isEmpty():
+                path, actions, cost = p_queue.pop()
+                node = path[-1]   
+                if problem.isGoalState(node) == True:
+                    return actions
+                if node not in closed_set:
+                    closed_set.append(node)
+                    for neighbour in problem.getSuccessors(node):
+                        n_node, n_action, n_cost = neighbour
+                        if n_node not in path:
+                            counter += 1
+                            p_queue.push((path + [n_node], actions + [n_action], n_cost + cost), [n_cost + cost, counter])
+            return []
+        return greedyBestFirstSearch(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -535,9 +548,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         complete the problem definition.
         """
         x,y = state
-
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[x][y] == True
 
 def mazeDistance(point1, point2, gameState):
     """
