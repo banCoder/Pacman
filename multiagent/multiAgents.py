@@ -47,7 +47,7 @@ class ReflexAgent(Agent):
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
-        "Add more of your code here if you want to"
+        #Add more of your code here if you want to
 
         return legalMoves[chosenIndex]
 
@@ -66,15 +66,60 @@ class ReflexAgent(Agent):
         Print out these variables to see what you're getting, then combine them
         to create a masterful evaluation function.
         """
+        import sys
         # Useful information you can extract from a GameState (pacman.py)
         successorGameState = currentGameState.generatePacmanSuccessor(action)
         newPos = successorGameState.getPacmanPosition()
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+        curGhostStates = currentGameState.getGhostStates()
+        # priority: win, avoid losing, eat ghost, eat food/ pellet
 
-        "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        # TERMINAL STATES
+        # win
+        if successorGameState.isWin() == True:
+            return sys.maxint
+        # avoid or eat ghost
+        if successorGameState.isLose() == True:
+            return 0     
+        closestGhost = sys.maxint
+        closestGhostC = sys.maxint
+        closestScareTimer = 0
+        for ghost in newGhostStates:
+            closestGhost = min(closestGhost, abs(newPos[0] - ghost.configuration.pos[0]) + abs(newPos[1] - ghost.configuration.pos[1]))
+        for ghost in curGhostStates:
+            dist = abs(newPos[0] - ghost.configuration.pos[0]) + abs(newPos[1] - ghost.configuration.pos[1])
+            if dist < closestGhostC:
+                closestGhostC = dist
+                closestScareTimer = ghost.scaredTimer
+        # avoid
+        if closestGhost == 1 and closestScareTimer == 0:
+            return 0
+
+        # FEATURES
+        features = 0
+        closestG = sys.maxint
+        # eat ghost
+        if closestGhost == 0 and closestScareTimer > 0:
+            features += 200
+        # chase ghost if he's closer than food        
+        elif closestScareTimer > 0:        
+            closestG = closestGhostC
+        # closest food
+        closestFood = int(currentGameState.hasFood(newPos[0], newPos[1]))
+        if closestFood == 0:
+            closestFood = sys.maxint
+            for h in range(newFood.width):
+                for w in range(newFood.height):
+                    if newFood[h][w] == True:
+                        closestFood = min(closestFood, abs(newPos[0] - h) + abs(newPos[1] - w) + 1)
+        # closest capsule
+        closestCapsule = sys.maxint
+        for c in currentGameState.getCapsules():
+            closestCapsule = min(closestCapsule, abs(newPos[0] - c[0]) + abs(newPos[1] - c[1]) + 1)
+
+        return (1.0 / (features + min(closestFood, closestCapsule, closestG)))
 
 def scoreEvaluationFunction(currentGameState):
     """
