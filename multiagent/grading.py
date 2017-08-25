@@ -21,6 +21,7 @@ import traceback
 import pdb
 from collections import defaultdict
 import util
+import timeit
 
 class Grades:
   "A data structure for project grades, along with formatting code to display them"
@@ -41,9 +42,12 @@ class Grades:
     self.edxOutput = edxOutput
     self.mute = muteOutput
     self.prereqs = defaultdict(set)
+    # TIME IT
+    self.startTime = timeit.default_timer()  
 
     #print 'Autograder transcript for %s' % self.project
-    print 'Starting on %d-%d at %d:%02d:%02d' % self.start
+    print 'Starting on %d-%d at %d:%02d:%02d' % self.start    
+    
 
   def addPrereq(self, question, prereq):
     self.prereqs[question].add(prereq)
@@ -89,6 +93,8 @@ class Grades:
 
 
     print '\nFinished at %d:%02d:%02d' % time.localtime()[3:6]
+    stop = timeit.default_timer()
+    print "Running time: " + str(stop - self.startTime) + "\n"
     print "\nProvisional grades\n=================="
 
     for q in self.questions:

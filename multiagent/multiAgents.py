@@ -45,7 +45,8 @@ class ReflexAgent(Agent):
         scores = [self.evaluationFunction(gameState, action) for action in legalMoves]
         bestScore = max(scores)
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
-        chosenIndex = random.choice(bestIndices) # Pick randomly among the best
+        #chosenIndex = random.choice(bestIndices) # Pick randomly among the best
+        chosenIndex = bestIndices[len(bestIndices) - 1]
 
         #Add more of your code here if you want to
 
@@ -104,16 +105,15 @@ class ReflexAgent(Agent):
         if closestGhost == 0 and closestScareTimer > 0:
             features += 200
         # chase ghost if he's closer than food        
-        elif closestScareTimer > 0:        
+        elif closestScareTimer > closestGhostC and closestGhostC > 0:        
             closestG = closestGhostC
         # closest food
         closestFood = int(currentGameState.hasFood(newPos[0], newPos[1]))
-        if closestFood == 0:
-            closestFood = sys.maxint
-            for h in range(newFood.width):
-                for w in range(newFood.height):
-                    if newFood[h][w] == True:
-                        closestFood = min(closestFood, abs(newPos[0] - h) + abs(newPos[1] - w) + 1)
+        if closestFood == 0:            
+            closestFood = min([abs(newPos[0] - x) + abs(newPos[1] - y) 
+                               for x in range(newFood.width) 
+                               for y in range(newFood.height) 
+                               if newFood[x][y] == True]) + 1
         # closest capsule
         closestCapsule = sys.maxint
         for c in currentGameState.getCapsules():
