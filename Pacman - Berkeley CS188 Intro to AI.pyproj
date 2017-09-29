@@ -14,7 +14,7 @@
     <InterpreterId>Global|ContinuumAnalytics|Anaconda27-64</InterpreterId>
     <IsWindowsApplication>False</IsWindowsApplication>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>-q q1 --no-graphics</CommandLineArguments>
+    <CommandLineArguments>-q q2</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

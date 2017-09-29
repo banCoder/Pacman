@@ -26,8 +26,7 @@ class ReflexAgent(Agent):
       The code below is provided as a guide.  You are welcome to change
       it in any way you see fit, so long as you don't touch our method
       headers.
-    """
-
+    """   
 
     def getAction(self, gameState):
         """
@@ -80,17 +79,17 @@ class ReflexAgent(Agent):
         # TERMINAL STATES
         # win
         if successorGameState.isWin() == True:
-            return sys.maxint
+            return successorGameState.getScore()            
         # avoid or eat ghost
         if successorGameState.isLose() == True:
-            return 0     
+            return -1
         closestGhost = sys.maxint
         closestGhostC = sys.maxint
         closestScareTimer = 0
         for ghost in newGhostStates:
-            closestGhost = min(closestGhost, abs(newPos[0] - ghost.configuration.pos[0]) + abs(newPos[1] - ghost.configuration.pos[1]))
+            closestGhost = min(closestGhost, ReflexAgent.manDist(self, newPos, ghost.configuration.pos))
         for ghost in curGhostStates:
-            dist = abs(newPos[0] - ghost.configuration.pos[0]) + abs(newPos[1] - ghost.configuration.pos[1])
+            dist = ReflexAgent.manDist(self, newPos, ghost.configuration.pos)
             if dist < closestGhostC:
                 closestGhostC = dist
                 closestScareTimer = ghost.scaredTimer
@@ -117,9 +116,13 @@ class ReflexAgent(Agent):
         # closest capsule
         closestCapsule = sys.maxint
         for c in currentGameState.getCapsules():
-            closestCapsule = min(closestCapsule, abs(newPos[0] - c[0]) + abs(newPos[1] - c[1]) + 1)
+            closestCapsule = min(closestCapsule, ReflexAgent.manDist(self, newPos, c) + 1)
 
         return (1.0 / (features + min(closestFood, closestCapsule, closestG)))
+
+    def manDist(self, fr, to):
+        """Manhattan distance"""
+        return abs(fr[0] - to[0]) + abs(fr[1] - to[1])
 
 def scoreEvaluationFunction(currentGameState):
     """
@@ -173,8 +176,40 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # call max function with current state and depth
+        return self.max(gameState, self.depth)[1]
+
+    # decrease depth when calling min and check for terminal states
+    # in max function generate legal actions
+    # generate legal states
+    # get best score and action
+    # return as tuple
+    def max(self, gameState, depth):
+        if depth == 0 or gameState.isWin() or gameState.isLose():
+            return (self.evaluationFunction(gameState), "none")
+        actions = gameState.getLegalActions(0)
+        scores = [self.min(gameState.generateSuccessor(0, action), 1, depth) for action in actions]
+        maxim = max([score[0] for score in scores])
+        bestAction = actions[[score[0] for score in scores].index(maxim)]
+        return (maxim, bestAction)
+
+    # in min function generate legal actions, legal states
+    # get worse score and action
+    # return as tuple
+    def min(self, gameState, agentIndex, depth):
+        if depth == 0 or gameState.isWin() or gameState.isLose():
+            return (self.evaluationFunction(gameState), "none")
+        actions = gameState.getLegalActions(agentIndex)
+        scores = []
+        # if it's not the last agent call min again
+        if agentIndex != (gameState.getNumAgents() - 1):
+            scores = [self.min(gameState.generateSuccessor(agentIndex, action), agentIndex + 1, depth) for action in actions]
+        else:
+            scores = [self.max(gameState.generateSuccessor(agentIndex, action), depth - 1) for action in actions]
+        minin = min([score[0] for score in scores])
+        worstAction = actions[[score[0] for score in scores].index(minin)]
+        return (minin, worstAction)
+
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
