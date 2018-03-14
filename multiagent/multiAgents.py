@@ -184,6 +184,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
     # generate legal states
     # get best score and action
     # return as tuple
+    #test
     def max(self, gameState, depth):
         if depth == 0 or gameState.isWin() or gameState.isLose():
             return (self.evaluationFunction(gameState), "none")
